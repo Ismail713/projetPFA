@@ -30,26 +30,26 @@ def extract_json(text: str) -> dict:
 
 
 @router.post("/generate-queries")
-def generate_queries(body: GenerateQueriesRequest):
+async def generate_queries(body: GenerateQueriesRequest):
     prompt_template = (PROMPTS_DIR / "query_generation_prompt.txt").read_text(encoding="utf-8")
     prompt = prompt_template.replace("{{CV_TEXT}}", body.cv_text)
 
-    raw = client.call(prompt, body.cv_text)
+    raw = await client.call(prompt)
 
     try:
         return extract_json(raw)
     except (json.JSONDecodeError, ValueError) as e:
-        raise HTTPException(status_code=500, detail=f"Invalid JSON from model: {e}\nRaw response: {raw}")
+        raise HTTPException(status_code=500, detail=f"Invalid JSON from model: {e}")
 
 
 @router.post("/final-match")
-def final_match(body: FinalMatchRequest):
+async def final_match(body: FinalMatchRequest):
     prompt_template = (PROMPTS_DIR / "matching_prompt.txt").read_text(encoding="utf-8")
     prompt = prompt_template.replace("{{CV_TEXT}}", body.cv_text).replace("{{JOB_DESCRIPTION}}", body.job_description)
 
-    raw = client.call(prompt, body.cv_text)
+    raw = await client.call(prompt)
 
     try:
         return extract_json(raw)
     except (json.JSONDecodeError, ValueError) as e:
-        raise HTTPException(status_code=500, detail=f"Invalid JSON from model: {e}\nRaw response: {raw}")
+        raise HTTPException(status_code=500, detail=f"Invalid JSON from model: {e}")
