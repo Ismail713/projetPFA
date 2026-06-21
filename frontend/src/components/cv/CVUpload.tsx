@@ -135,7 +135,7 @@ export default function CVUpload() {
   const isProcessing = phase === "uploading" || phase === "polling";
 
   return (
-    <div className="flex flex-col items-center gap-4 w-full max-w-lg mx-auto">
+    <div className="flex flex-col items-center gap-5 w-full max-w-xl mx-auto animate-fade-in">
       <div
         onClick={() => !isProcessing && inputRef.current?.click()}
         onDrop={handleDrop}
@@ -150,36 +150,60 @@ export default function CVUpload() {
           }
         }}
         className={`
-          w-full rounded-xl border-2 border-dashed p-10
-          flex flex-col items-center gap-4
-          transition-colors duration-200 cursor-pointer
+          relative w-full rounded-2xl border-2 border-dashed p-12
+          flex flex-col items-center gap-5
+          transition-all duration-300 cursor-pointer
+          gradient-border
           ${
             dragOver
-              ? "border-blue-400 bg-blue-400/10"
-              : "border-gray-600 bg-gray-800/50 hover:border-gray-400 hover:bg-gray-800"
+              ? "border-accent-400 bg-accent-50 shadow-glow-sm dark:bg-accent-500/10 dark:shadow-glow"
+              : "border-slate-300 bg-white hover:border-accent-400/50 hover:bg-slate-50 hover:shadow-card-light dark:border-surface-600 dark:bg-surface-800/50 dark:hover:border-accent-500/40 dark:hover:bg-surface-800/80 dark:hover:shadow-glow-sm"
           }
           ${isProcessing ? "pointer-events-none opacity-60" : ""}
         `}
       >
-        {/* Upload icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-12 w-12 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={1.5}
+        <div
+          className={`
+          rounded-xl p-4 transition-colors duration-300
+          ${
+            dragOver
+              ? "bg-accent-100 dark:bg-accent-500/15"
+              : "bg-slate-100 dark:bg-surface-700/50"
+          }
+        `}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"
-          />
-        </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className={`h-10 w-10 transition-colors duration-300 ${
+              dragOver
+                ? "text-accent-500 dark:text-accent-400"
+                : "text-slate-400 dark:text-surface-400"
+            }`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={1.5}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16"
+            />
+          </svg>
+        </div>
 
-        <p className="text-gray-300 text-center text-sm">
-          Déposez votre CV (PDF) ici ou cliquez pour uploader
-        </p>
+        <div className="text-center">
+          <p className="font-display text-sm font-semibold text-slate-700 dark:text-surface-200">
+            Déposez votre CV ici
+          </p>
+          <p className="mt-1.5 text-xs text-slate-400 dark:text-surface-500">
+            PDF uniquement &middot; 10 Mo maximum
+          </p>
+        </div>
+
+        <span className="rounded-lg bg-accent-600 px-5 py-2 text-xs font-semibold text-white transition-colors hover:bg-accent-500">
+          Parcourir
+        </span>
 
         <input
           ref={inputRef}
@@ -191,13 +215,26 @@ export default function CVUpload() {
       </div>
 
       {error && (
-        <p className="text-red-400 text-sm text-center">{error}</p>
+        <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 dark:bg-match-skip-muted/40 dark:border-match-skip/20 px-4 py-2.5">
+          <svg
+            className="h-4 w-4 flex-shrink-0 text-red-500 dark:text-match-skip"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-red-600 dark:text-match-skip text-sm">{error}</p>
+        </div>
       )}
 
       {isProcessing && (
-        <div className="flex items-center gap-3 text-blue-300 text-sm">
+        <div className="flex items-center gap-3 rounded-lg bg-accent-50 border border-accent-200 dark:bg-accent-500/10 dark:border-accent-500/20 px-5 py-3">
           <svg
-            className="h-5 w-5 animate-spin"
+            className="h-4 w-4 animate-spin text-accent-500 dark:text-accent-400"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -216,15 +253,31 @@ export default function CVUpload() {
               d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
             />
           </svg>
-          <span>{STATUS_MESSAGES[statusIndex]}</span>
+          <span className="text-sm text-accent-700 dark:text-accent-200">
+            {STATUS_MESSAGES[statusIndex]}
+          </span>
         </div>
       )}
 
       {phase === "done" && matches && (
-        <p className="text-green-400 text-sm">
-          {matches.length} offre{matches.length > 1 ? "s" : ""} correspondante
-          {matches.length > 1 ? "s" : ""} trouvée{matches.length > 1 ? "s" : ""}.
-        </p>
+        <div className="flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 dark:bg-match-apply-muted/40 dark:border-match-apply/20 px-4 py-2.5">
+          <svg
+            className="h-4 w-4 flex-shrink-0 text-emerald-500 dark:text-match-apply"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-emerald-700 dark:text-match-apply text-sm">
+            {matches.length} offre{matches.length > 1 ? "s" : ""} correspondante
+            {matches.length > 1 ? "s" : ""} trouvée
+            {matches.length > 1 ? "s" : ""}.
+          </p>
+        </div>
       )}
     </div>
   );

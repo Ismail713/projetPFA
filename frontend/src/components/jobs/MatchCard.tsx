@@ -12,19 +12,28 @@ export interface MatchResult {
 
 const VERDICT_CONFIG = {
   Apply: {
-    ring: "text-green-400",
-    track: "text-green-900",
-    badge: "bg-green-500/20 text-green-400 border-green-500/30",
+    stroke: "#34D399",
+    trackVar: "var(--score-track-apply)",
+    glow: "score-glow-apply",
+    badge:
+      "bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-match-apply-muted/50 dark:text-match-apply dark:border-match-apply/25",
+    label: "Postuler",
   },
   Consider: {
-    ring: "text-orange-400",
-    track: "text-orange-900",
-    badge: "bg-orange-500/20 text-orange-400 border-orange-500/30",
+    stroke: "#FBBF24",
+    trackVar: "var(--score-track-consider)",
+    glow: "score-glow-consider",
+    badge:
+      "bg-amber-50 text-amber-600 border-amber-200 dark:bg-match-consider-muted/50 dark:text-match-consider dark:border-match-consider/25",
+    label: "À considérer",
   },
   Skip: {
-    ring: "text-red-400",
-    track: "text-red-900",
-    badge: "bg-red-500/20 text-red-400 border-red-500/30",
+    stroke: "#F87171",
+    trackVar: "var(--score-track-skip)",
+    glow: "score-glow-skip",
+    badge:
+      "bg-red-50 text-red-500 border-red-200 dark:bg-match-skip-muted/50 dark:text-match-skip dark:border-match-skip/25",
+    label: "Passer",
   },
 } as const;
 
@@ -34,108 +43,150 @@ function verdictFor(score: number): keyof typeof VERDICT_CONFIG {
   return "Skip";
 }
 
-function ScoreCircle({ score, verdict }: { score: number; verdict: keyof typeof VERDICT_CONFIG }) {
-  const { ring, track } = VERDICT_CONFIG[verdict];
+function ScoreCircle({
+  score,
+  verdict,
+}: {
+  score: number;
+  verdict: keyof typeof VERDICT_CONFIG;
+}) {
+  const { stroke, trackVar, glow } = VERDICT_CONFIG[verdict];
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (score / 100) * circumference;
 
   return (
-    <div className="relative h-28 w-28 flex-shrink-0">
+    <div className={`relative h-24 w-24 flex-shrink-0 ${glow}`}>
       <svg className="h-full w-full -rotate-90" viewBox="0 0 100 100">
         <circle
           cx="50"
           cy="50"
           r={radius}
           fill="none"
-          strokeWidth="8"
-          className={track}
-          stroke="currentColor"
+          strokeWidth="6"
+          stroke={trackVar}
         />
         <circle
           cx="50"
           cy="50"
           r={radius}
           fill="none"
-          strokeWidth="8"
+          strokeWidth="6"
           strokeLinecap="round"
-          className={ring}
-          stroke="currentColor"
+          stroke={stroke}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          style={{ transition: "stroke-dashoffset 0.6s ease" }}
+          style={{
+            transition: "stroke-dashoffset 0.8s cubic-bezier(.4,0,.2,1)",
+          }}
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-2xl font-bold text-white">
-        {score}
-      </span>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-display text-2xl font-bold text-slate-900 dark:text-white leading-none">
+          {score}
+        </span>
+        <span className="text-[10px] font-medium text-slate-400 dark:text-surface-400 mt-0.5">
+          / 100
+        </span>
+      </div>
     </div>
   );
 }
 
 export default function MatchCard({ match }: { match: MatchResult }) {
   const verdict = verdictFor(match.score);
-  const { badge } = VERDICT_CONFIG[verdict];
+  const { badge, label } = VERDICT_CONFIG[verdict];
 
   const strengths = match.strengths.slice(0, 3);
   const missing = match.missing_requirements.slice(0, 3);
 
   return (
-    <div className="rounded-xl bg-gray-900 shadow-lg shadow-black/30 border border-gray-800 p-6 flex flex-col gap-5">
-      {/* Header: score circle + title/company + badge */}
-      <div className="flex items-start gap-5">
+    <div className="group rounded-2xl bg-white border border-slate-200 shadow-card-light transition-all duration-300 hover:shadow-card-light-hover hover:border-slate-300 dark:glass dark:shadow-card dark:hover:shadow-card-hover dark:hover:border-surface-500/30 dark:border-transparent p-6 flex flex-col gap-5 animate-slide-up">
+      <div className="flex items-start gap-4">
         <ScoreCircle score={match.score} verdict={verdict} />
 
-        <div className="flex-1 min-w-0 pt-1">
-          <h3 className="text-lg font-bold text-white truncate">{match.title}</h3>
-          <p className="text-sm font-semibold text-gray-400 mt-0.5">{match.company}</p>
+        <div className="flex-1 min-w-0 pt-1.5">
+          <h3 className="font-display text-base font-bold text-slate-900 dark:text-white truncate leading-snug">
+            {match.title}
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-surface-400 mt-1">
+            {match.company}
+          </p>
         </div>
 
         <span
-          className={`self-start rounded-full border px-3 py-1 text-xs font-semibold whitespace-nowrap ${badge}`}
+          className={`self-start rounded-full border px-3 py-1 text-[11px] font-semibold whitespace-nowrap ${badge}`}
         >
-          {verdict}
+          {label}
         </span>
       </div>
 
-      {/* Strengths + Missing */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
         {strengths.length > 0 && (
-          <ul className="space-y-1.5">
-            {strengths.map((s) => (
-              <li key={s} className="flex items-start gap-2 text-gray-300">
-                <span className="text-green-400 mt-0.5">✓</span>
-                <span>{s}</span>
-              </li>
-            ))}
-          </ul>
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-surface-500">
+              Points forts
+            </p>
+            <ul className="space-y-1.5">
+              {strengths.map((s) => (
+                <li
+                  key={s}
+                  className="flex items-start gap-2 text-slate-700 dark:text-surface-200"
+                >
+                  <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-match-apply flex-shrink-0" />
+                  <span className="leading-snug">{s}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         {missing.length > 0 && (
-          <ul className="space-y-1.5">
-            {missing.map((m) => (
-              <li key={m} className="flex items-start gap-2 text-gray-300">
-                <span className="text-red-400 mt-0.5">✗</span>
-                <span>{m}</span>
-              </li>
-            ))}
-          </ul>
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-surface-500">
+              Manquant
+            </p>
+            <ul className="space-y-1.5">
+              {missing.map((m) => (
+                <li
+                  key={m}
+                  className="flex items-start gap-2 text-slate-500 dark:text-surface-300"
+                >
+                  <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-match-skip/60 flex-shrink-0" />
+                  <span className="leading-snug">{m}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
 
-      {/* Recommendation */}
       {match.recommendation && (
-        <p className="text-sm italic text-gray-500">{match.recommendation}</p>
+        <p className="text-sm leading-relaxed text-slate-500 dark:text-surface-400 border-l-2 border-slate-200 dark:border-surface-600 pl-3">
+          {match.recommendation}
+        </p>
       )}
 
-      {/* CTA */}
       <a
         href={match.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="self-start rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
+        className="self-start inline-flex items-center gap-2 rounded-lg bg-accent-600 px-5 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:bg-accent-500 hover:shadow-glow-sm"
       >
         Voir l&apos;offre
+        <svg
+          className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2.5}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+          />
+        </svg>
       </a>
     </div>
   );
