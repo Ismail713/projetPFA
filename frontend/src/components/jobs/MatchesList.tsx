@@ -78,6 +78,8 @@ export default function MatchesList() {
     }
   }, []);
 
+  const emptyCountRef = useRef(0);
+
   const fetchMatches = useCallback(async () => {
     try {
       const res = await fetch("/api/matches");
@@ -85,21 +87,23 @@ export default function MatchesList() {
 
       const data: ApiResponse = await res.json();
 
-      if (data.status === "processing") {
-        setStatus("processing");
-        return;
-      }
-
-      stopPolling();
-
       const results =
         data.matches ?? (Array.isArray(data) ? (data as MatchResult[]) : []);
 
-      if (results.length === 0) {
-        setStatus("empty");
-      } else {
+      if (results.length > 0) {
+        stopPolling();
+        emptyCountRef.current = 0;
         setMatches(results.sort((a, b) => b.score - a.score));
         setStatus("done");
+      } else {
+        emptyCountRef.current += 1;
+        // Keep polling for 2 minutes (24 x 5s), then show empty
+        if (emptyCountRef.current >= 24) {
+          stopPolling();
+          setStatus("empty");
+        } else {
+          setStatus("processing");
+        }
       }
     } catch (err) {
       stopPolling();

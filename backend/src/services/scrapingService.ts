@@ -1,7 +1,7 @@
-import puppeteer, { type Browser, type Page } from "puppeteer";
 import pool from "../config/db";
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://ai-service:8000";
+const JSEARCH_API_KEY = process.env.JSEARCH_API_KEY || "";
 
 interface PlatformQueries {
   linkedin: string[];
@@ -26,40 +26,46 @@ interface MatchResponse {
   recommendation: string;
 }
 
-async function scrapeIndeedPage(page: Page, query: string): Promise<ScrapedJob[]> {
-  const url = `https://www.indeed.com/jobs?q=${encodeURIComponent(query)}&limit=10`;
+async function searchJobs(query: string): Promise<ScrapedJob[]> {
   const jobs: ScrapedJob[] = [];
 
   try {
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-    await page.waitForSelector(".job_seen_beacon, .jobsearch-ResultsList", { timeout: 10000 });
+    const res = await fetch(
+      `https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(query)}&num_pages=1&page=1`,
+      {
+        headers: {
+          "x-rapidapi-key": JSEARCH_API_KEY,
+          "x-rapidapi-host": "jsearch.p.rapidapi.com",
+        },
+      }
+    );
 
-    const scraped = await page.evaluate(() => {
-      const cards = document.querySelectorAll(".job_seen_beacon");
-      const results: Array<{ title: string; company: string; description: string; url: string }> = [];
+    if (!res.ok) {
+      console.error(`JSearch API error: ${res.status}`);
+      return jobs;
+    }
 
-      cards.forEach((card: Element, i: number) => {
-        if (i >= 10) return;
+    const data = (await res.json()) as {
+      data: Array<{
+        job_title: string;
+        employer_name: string;
+        job_description: string;
+        job_apply_link: string;
+        job_publisher: string;
+      }>;
+    };
 
-        const titleEl = card.querySelector("h2.jobTitle a, h2.jobTitle span");
-        const companyEl = card.querySelector("[data-testid='company-name'], .companyName");
-        const linkEl = card.querySelector("h2.jobTitle a");
-        const snippetEl = card.querySelector(".job-snippet, [data-testid='job-snippet']");
-
-        results.push({
-          title: titleEl?.textContent?.trim() || "Untitled",
-          company: companyEl?.textContent?.trim() || "Unknown",
-          description: snippetEl?.textContent?.trim() || "",
-          url: linkEl ? `https://www.indeed.com${linkEl.getAttribute("href") || ""}` : "",
-        });
+    for (const item of (data.data || []).slice(0, 5)) {
+      jobs.push({
+        title: item.job_title || "Untitled",
+        company: item.employer_name || "Unknown",
+        description: (item.job_description || "").substring(0, 2000),
+        url: item.job_apply_link || "",
+        source: item.job_publisher || "jsearch",
       });
-
-      return results;
-    });
-
-    jobs.push(...scraped.map((j) => ({ ...j, source: "indeed" })));
+    }
   } catch (err) {
-    console.error(`Scraping failed for query "${query}":`, err);
+    console.error(`Job search failed for "${query}":`, err);
   }
 
   return jobs;
@@ -71,8 +77,6 @@ export async function runScrapingAndMatchingPipeline(
   queries: { platform_queries: PlatformQueries },
   cvText: string
 ): Promise<void> {
-  let browser: Browser | null = null;
-
   const jobResult = await pool.query(
     "SELECT id FROM scraping_jobs WHERE user_id = $1 AND cv_id = $2 ORDER BY created_at DESC LIMIT 1",
     [userId, cvId]
@@ -83,31 +87,38 @@ export async function runScrapingAndMatchingPipeline(
   try {
     await pool.query("UPDATE scraping_jobs SET status = 'running' WHERE id = $1", [scrapingJobId]);
 
-    browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
-    const page = await browser.newPage();
-    await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    );
-
+    const pq = queries.platform_queries || {};
+    const toArray = (v: unknown): string[] => {
+      if (Array.isArray(v)) return v.map(String);
+      if (typeof v === "string") return [v];
+      return [];
+    };
     const allQueries = [
-      ...queries.platform_queries.indeed,
-      ...queries.platform_queries.linkedin,
-      ...queries.platform_queries.generic,
+      ...toArray(pq.generic),
+      ...toArray(pq.indeed),
+      ...toArray(pq.linkedin),
     ];
 
-    for (const query of allQueries) {
-      const jobs = await scrapeIndeedPage(page, query);
+    // Deduplicate and limit to 3 queries to conserve API calls
+    const uniqueQueries = [...new Set(allQueries)].slice(0, 3);
+    console.log("Search queries:", uniqueQueries);
+    const seenUrls = new Set<string>();
+
+    for (const query of uniqueQueries) {
+      console.log(`Searching jobs for: "${query}"`);
+      const jobs = await searchJobs(query);
+      console.log(`Found ${jobs.length} jobs for "${query}"`);
 
       for (const job of jobs) {
+        if (seenUrls.has(job.url)) continue;
+        seenUrls.add(job.url);
+
         await pool.query(
           "INSERT INTO job_offers (scraping_job_id, title, company, description, source, url) VALUES ($1, $2, $3, $4, $5, $6)",
           [scrapingJobId, job.title, job.company, job.description, job.source, job.url]
         );
       }
     }
-
-    await browser.close();
-    browser = null;
 
     const offers = await pool.query(
       "SELECT id, title, company, description FROM job_offers WHERE scraping_job_id = $1",
@@ -119,7 +130,10 @@ export async function runScrapingAndMatchingPipeline(
         const matchRes = await fetch(`${AI_SERVICE_URL}/ai/final-match`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ cv_text: cvText, job_description: offer.description }),
+          body: JSON.stringify({
+            cv_text: cvText,
+            job_description: `${offer.title} at ${offer.company}. ${offer.description}`,
+          }),
         });
 
         if (!matchRes.ok) continue;
@@ -151,9 +165,5 @@ export async function runScrapingAndMatchingPipeline(
   } catch (err) {
     console.error("Pipeline error:", err);
     await pool.query("UPDATE scraping_jobs SET status = 'failed' WHERE id = $1", [scrapingJobId]);
-  } finally {
-    if (browser) {
-      await browser.close().catch(() => {});
-    }
   }
 }

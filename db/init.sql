@@ -6,6 +6,12 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT NOW()
 );
 
+INSERT INTO users (id, email, password_hash, role)
+VALUES (0, 'anonymous@smartmatch.local', 'nologin', 'anonymous')
+ON CONFLICT (id) DO NOTHING;
+
+SELECT setval('users_id_seq', GREATEST((SELECT MAX(id) FROM users), 1));
+
 CREATE TABLE cv_versions (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -15,6 +21,26 @@ CREATE TABLE cv_versions (
 );
 
 CREATE INDEX idx_cv_versions_user_id ON cv_versions(user_id);
+
+CREATE TABLE cv_analyses (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    cv_id INT NOT NULL REFERENCES cv_versions(id) ON DELETE CASCADE,
+    cv_score INT CHECK (cv_score >= 0 AND cv_score <= 100),
+    overall_assessment TEXT,
+    strengths_json JSONB,
+    weaknesses_json JSONB,
+    missing_sections_json JSONB,
+    suggestions_to_add_json JSONB,
+    suggestions_to_remove_json JSONB,
+    suggestions_to_improve_json JSONB,
+    keywords_to_add_json JSONB,
+    rewrite_tips_json JSONB,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_cv_analyses_user_id ON cv_analyses(user_id);
+CREATE INDEX idx_cv_analyses_cv_id ON cv_analyses(cv_id);
 
 CREATE TABLE scraping_jobs (
     id SERIAL PRIMARY KEY,

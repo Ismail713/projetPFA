@@ -10,7 +10,7 @@ const STATUS_MESSAGES = [
   "Recherche des offres correspondantes...",
 ];
 
-type Phase = "idle" | "uploading" | "polling" | "done" | "error";
+type Phase = "idle" | "uploading" | "polling" | "analysis-done" | "done" | "error";
 
 export default function CVUpload() {
   const [phase, setPhase] = useState<Phase>("idle");
@@ -53,15 +53,32 @@ export default function CVUpload() {
     }, 3000);
   }
 
+  const analysisFoundRef = useRef(false);
+
   function startPolling() {
+    analysisFoundRef.current = false;
     pollingRef.current = setInterval(async () => {
       try {
+        // Check if CV analysis is ready
+        if (!analysisFoundRef.current) {
+          const analysisRes = await fetch("/api/cv/analysis/latest");
+          if (analysisRes.ok) {
+            const analysis = await analysisRes.json();
+            if (analysis.cv_score > 0) {
+              analysisFoundRef.current = true;
+              setPhase("analysis-done");
+            }
+          }
+        }
+
+        // Check if matches are ready
         const res = await fetch("/api/matches");
         if (!res.ok) return;
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
+        const results = data.matches ?? (Array.isArray(data) ? data : []);
+        if (results.length > 0) {
           clearTimers();
-          setMatches(data);
+          setMatches(results);
           setPhase("done");
         }
       } catch {
@@ -132,7 +149,7 @@ export default function CVUpload() {
     e.target.value = "";
   }
 
-  const isProcessing = phase === "uploading" || phase === "polling";
+  const isProcessing = phase === "uploading" || phase === "polling" || phase === "analysis-done";
 
   return (
     <div className="flex flex-col items-center gap-5 w-full max-w-xl mx-auto animate-fade-in">
@@ -231,7 +248,29 @@ export default function CVUpload() {
         </div>
       )}
 
-      {isProcessing && (
+      {phase === "analysis-done" && (
+        <div className="flex flex-col gap-3 w-full max-w-md">
+          <div className="flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 dark:bg-match-apply-muted/40 dark:border-match-apply/20 px-4 py-2.5">
+            <svg className="h-4 w-4 flex-shrink-0 text-emerald-500 dark:text-match-apply" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <p className="text-emerald-700 dark:text-match-apply text-sm font-medium">
+              Analyse du CV terminée !
+            </p>
+          </div>
+          <div className="flex items-center gap-3 rounded-lg bg-accent-50 border border-accent-200 dark:bg-accent-500/10 dark:border-accent-500/20 px-5 py-3">
+            <svg className="h-4 w-4 animate-spin text-accent-500 dark:text-accent-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+            </svg>
+            <span className="text-sm text-accent-700 dark:text-accent-200">
+              Recherche des offres d&apos;emploi en cours...
+            </span>
+          </div>
+        </div>
+      )}
+
+      {(phase === "uploading" || phase === "polling") && (
         <div className="flex items-center gap-3 rounded-lg bg-accent-50 border border-accent-200 dark:bg-accent-500/10 dark:border-accent-500/20 px-5 py-3">
           <svg
             className="h-4 w-4 animate-spin text-accent-500 dark:text-accent-400"
