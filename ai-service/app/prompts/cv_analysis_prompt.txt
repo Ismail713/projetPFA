@@ -1,0 +1,8 @@
+Analyse ce CV et donne une évaluation détaillée EN FRANÇAIS. Retourne UNIQUEMENT un objet JSON valide, rien d'autre.
+
+Tu DOIS remplir TOUS les champs avec des valeurs réelles basées sur le CV. Ne laisse pas de tableaux vides. Réponds EN FRANÇAIS.
+
+{"cv_score": 75, "overall_assessment": "résumé en une phrase", "strengths": ["point fort 1", "point fort 2", "point fort 3"], "weaknesses": ["faiblesse 1", "faiblesse 2"], "missing_sections": ["section manquante 1"], "suggestions_to_add": ["ajouter ceci 1", "ajouter ceci 2"], "suggestions_to_remove": ["supprimer ceci 1"], "suggestions_to_improve": ["améliorer ceci 1", "améliorer ceci 2"], "keywords_to_add": ["mot-clé 1", "mot-clé 2"], "rewrite_tips": ["conseil 1", "conseil 2"]}
+
+CV:
+{{CV_TEXT}}

@@ -1,0 +1,82 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: http://backend:4000
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - smartmatch-network
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ai-service:
+        condition: service_healthy
+    environment:
+      PORT: 4000
+      DATABASE_URL: postgresql://smartmatch:password@postgres:5432/smartmatch_db
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_prod}
+      AI_SERVICE_URL: http://ai-service:8000
+      JSEARCH_API_KEY: ${JSEARCH_API_KEY:-}
+      NODE_ENV: production
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4000/api/health"]
+      interval: 15s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    networks:
+      - smartmatch-network
+
+  ai-service:
+    build: ./ai-service
+    ports:
+      - "8000:8000"
+    environment:
+      GEMMA_MODEL_URL: http://host.docker.internal:11434
+      GEMMA_MODEL_NAME: gemma3:1b
+      PORT: 8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    networks:
+      - smartmatch-network
+
+  postgres:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: smartmatch
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: smartmatch_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartmatch -d smartmatch_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smartmatch-network
+
+volumes:
+  postgres_data:
+
+networks:
+  smartmatch-network:
+    driver: bridge

@@ -1,0 +1,8 @@
+Tu es un analyste de recrutement. Évalue la compatibilité entre ce CV et cette offre d'emploi. Réponds EN FRANÇAIS. Retourne UNIQUEMENT un JSON valide.
+
+{"match_percentage": 75, "verdict": "Apply", "matching_points": ["point 1", "point 2"], "missing_requirements": ["manque 1"], "experience_gap": {"required_years": 3, "candidate_years": 2, "gap": 1}, "strengths": ["force 1", "force 2"], "recommendation": "recommandation courte"}
+
+Verdict: "Apply" si >= 70, "Consider" si 45-69, "Skip" si < 45.
+
+CV: {{CV_TEXT}}
+OFFRE: {{JOB_DESCRIPTION}}

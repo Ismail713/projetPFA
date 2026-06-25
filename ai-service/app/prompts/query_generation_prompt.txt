@@ -1,0 +1,10 @@
+Analyse ce CV et génère des requêtes de recherche d'emploi. Retourne UNIQUEMENT un JSON valide.
+
+IMPORTANT: Les requêtes doivent être des TITRES DE POSTES et COMPETENCES, PAS le nom du candidat.
+Exemples de bonnes requêtes: "Full Stack Developer", "React Node.js Developer", "Python Backend Engineer"
+Exemples de MAUVAISES requêtes: "John Doe LinkedIn", "John Doe Indeed"
+
+{"platform_queries": {"linkedin": ["titre poste 1", "titre poste 2"], "indeed": ["titre poste 1", "titre poste 2"], "generic": ["competence1 competence2", "titre poste", "framework1 developer"]}}
+
+CV:
+{{CV_TEXT}}
