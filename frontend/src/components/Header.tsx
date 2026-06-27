@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ThemeToggle from "./ThemeToggle";
+import { useAuth } from "@/context/AuthContext";
 
 const NAV_LINKS = [
   { label: "Accueil", href: "/" },
@@ -12,6 +13,7 @@ const NAV_LINKS = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, logout, isLoading } = useAuth();
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 glass">
@@ -48,18 +50,34 @@ export default function Header() {
           <ThemeToggle />
 
           <div className="hidden sm:flex items-center gap-2 ml-1">
-            <a
-              href="/login"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:text-slate-900 hover:bg-slate-100/70 dark:text-surface-200 dark:hover:text-white dark:hover:bg-surface-700/40"
-            >
-              Se connecter
-            </a>
-            <a
-              href="/register"
-              className="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-600 hover:shadow-glow-sm active:scale-[0.97]"
-            >
-              Commencer gratuitement
-            </a>
+            {isLoading ? null : user ? (
+              <>
+                <span className="px-3 py-2 text-sm font-medium text-slate-600 dark:text-surface-300 truncate max-w-[160px]">
+                  {user.email}
+                </span>
+                <button
+                  onClick={logout}
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:text-slate-900 hover:bg-slate-100/70 dark:text-surface-200 dark:hover:text-white dark:hover:bg-surface-700/40"
+                >
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              <>
+                <a
+                  href="/login"
+                  className="rounded-lg px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:text-slate-900 hover:bg-slate-100/70 dark:text-surface-200 dark:hover:text-white dark:hover:bg-surface-700/40"
+                >
+                  Se connecter
+                </a>
+                <a
+                  href="/register"
+                  className="rounded-lg bg-accent-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent-600 hover:shadow-glow-sm active:scale-[0.97]"
+                >
+                  Commencer gratuitement
+                </a>
+              </>
+            )}
           </div>
 
           {/* ── Mobile menu button ──────────────────── */}
@@ -114,20 +132,36 @@ export default function Header() {
           ))}
 
           <div className="mt-3 flex flex-col gap-2 border-t border-slate-200/60 dark:border-surface-600/20 pt-4">
-            <a
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg border border-slate-300 dark:border-surface-600 px-4 py-2.5 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-surface-200 dark:hover:bg-surface-700/40"
-            >
-              Se connecter
-            </a>
-            <a
-              href="/register"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg bg-accent-500 px-4 py-2.5 text-center text-sm font-semibold text-white transition-all hover:bg-accent-600 active:scale-[0.97]"
-            >
-              Commencer gratuitement
-            </a>
+            {isLoading ? null : user ? (
+              <>
+                <span className="px-4 py-2.5 text-center text-sm font-medium text-slate-600 dark:text-surface-300 truncate">
+                  {user.email}
+                </span>
+                <button
+                  onClick={() => { logout(); setMobileOpen(false); }}
+                  className="rounded-lg border border-slate-300 dark:border-surface-600 px-4 py-2.5 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-surface-200 dark:hover:bg-surface-700/40"
+                >
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              <>
+                <a
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg border border-slate-300 dark:border-surface-600 px-4 py-2.5 text-center text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-surface-200 dark:hover:bg-surface-700/40"
+                >
+                  Se connecter
+                </a>
+                <a
+                  href="/register"
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg bg-accent-500 px-4 py-2.5 text-center text-sm font-semibold text-white transition-all hover:bg-accent-600 active:scale-[0.97]"
+                >
+                  Commencer gratuitement
+                </a>
+              </>
+            )}
           </div>
         </div>
       </div>
