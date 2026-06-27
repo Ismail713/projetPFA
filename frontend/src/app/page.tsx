@@ -1,6 +1,5 @@
 import HeroSection from "@/components/HeroSection";
 import HowItWorks from "@/components/HowItWorks";
-import Pricing from "@/components/Pricing";
 import CVUpload from "@/components/cv/CVUpload";
 import MatchesList from "@/components/jobs/MatchesList";
 import CVAnalysis from "@/components/cv/CVAnalysis";
@@ -11,7 +10,6 @@ export default function Home() {
     <>
       <HeroSection />
       <HowItWorks />
-      <Pricing />
 
       {/* Upload */}
       <section id="upload" className="mx-auto max-w-6xl px-6 py-20">
