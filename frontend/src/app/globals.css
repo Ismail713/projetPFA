@@ -21,6 +21,11 @@
 
 /* ── Base ─────────────────────────────────────────────── */
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
   body {
     @apply bg-slate-50 text-slate-800 font-body antialiased
            dark:bg-surface-950 dark:text-surface-100;

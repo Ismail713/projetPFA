@@ -1,5 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import HowItWorks from "@/components/HowItWorks";
+import GallerySection from "@/components/GallerySection";
 import CVUpload from "@/components/cv/CVUpload";
 import MatchesList from "@/components/jobs/MatchesList";
 import CVAnalysis from "@/components/cv/CVAnalysis";
@@ -10,6 +11,7 @@ export default function Home() {
     <>
       <HeroSection />
       <HowItWorks />
+      <GallerySection />
 
       {/* Upload */}
       <section id="upload" className="mx-auto max-w-6xl px-6 py-20">

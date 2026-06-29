@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 
@@ -10,9 +10,31 @@ const NAV_LINKS = [
   { label: "Galerie", href: "#gallery" },
 ] as const;
 
+function scrollToHash(hash: string) {
+  const el = document.querySelector(hash);
+  if (el) {
+    const top = el.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top, behavior: "smooth" });
+  }
+}
+
+function handleHashClick(e: React.MouseEvent<HTMLAnchorElement>, href: string) {
+  if (!href.startsWith("#")) return;
+  e.preventDefault();
+  window.history.pushState(null, "", href);
+  scrollToHash(href);
+}
+
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout, isLoading } = useAuth();
+
+  useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      setTimeout(() => scrollToHash(hash), 100);
+    }
+  }, []);
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 glass">
@@ -37,6 +59,7 @@ export default function Header() {
             <a
               key={href}
               href={href}
+              onClick={(e) => handleHashClick(e, href)}
               className="rounded-lg px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900 hover:bg-slate-100/70 dark:text-surface-300 dark:hover:text-white dark:hover:bg-surface-700/40"
             >
               {label}
@@ -123,7 +146,7 @@ export default function Header() {
             <a
               key={href}
               href={href}
-              onClick={() => setMobileOpen(false)}
+              onClick={(e) => { handleHashClick(e, href); setMobileOpen(false); }}
               className="rounded-lg px-3.5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 dark:text-surface-200 dark:hover:bg-surface-700/40"
             >
               {label}
