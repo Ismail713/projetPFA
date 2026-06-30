@@ -1,0 +1,384 @@
+{
+  "jobs": [
+    {
+      "job_title": "Full Stack Developer",
+      "aliases": ["Développeur Full Stack", "Web Developer", "Software Engineer"],
+      "required_skills": {
+        "primary": ["React", "Node.js", "JavaScript", "REST APIs"],
+        "secondary": ["TypeScript", "Docker", "PostgreSQL", "Git"],
+        "nice_to_have": ["GraphQL", "AWS", "Redis", "CI/CD"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "8000-12000" },
+        "mid": { "years": "2-5", "salary_mad": "12000-20000" },
+        "senior": { "years": "5+", "salary_mad": "20000-35000" }
+      },
+      "related_certifications": ["AWS Developer", "Meta React"],
+      "related_jobs": ["Frontend Developer", "Backend Developer"],
+      "market_demand": "high",
+      "keywords_fr": ["développeur", "web", "frontend", "backend"],
+      "keywords_en": ["developer", "engineer", "programmer"]
+    },
+    {
+      "job_title": "Frontend Developer",
+      "aliases": ["Développeur Frontend", "UI Developer", "Client-Side Developer"],
+      "required_skills": {
+        "primary": ["HTML", "CSS", "JavaScript", "React"],
+        "secondary": ["TypeScript", "Vue.js", "Sass", "Webpack"],
+        "nice_to_have": ["Next.js", "Tailwind CSS", "Figma", "Storybook"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "7000-11000" },
+        "mid": { "years": "2-5", "salary_mad": "11000-18000" },
+        "senior": { "years": "5+", "salary_mad": "18000-30000" }
+      },
+      "related_certifications": ["Meta React", "Meta Front-End Developer"],
+      "related_jobs": ["Full Stack Developer", "UI/UX Designer"],
+      "market_demand": "high",
+      "keywords_fr": ["développeur frontend", "interface", "web design"],
+      "keywords_en": ["frontend developer", "client-side", "UI engineer"]
+    },
+    {
+      "job_title": "Backend Developer",
+      "aliases": ["Développeur Backend", "Server-Side Developer", "API Developer"],
+      "required_skills": {
+        "primary": ["Node.js", "Python", "SQL", "REST APIs"],
+        "secondary": ["Express", "Docker", "PostgreSQL", "MongoDB"],
+        "nice_to_have": ["Kafka", "GraphQL", "Microservices", "Redis"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "8000-12000" },
+        "mid": { "years": "2-5", "salary_mad": "12000-20000" },
+        "senior": { "years": "5+", "salary_mad": "20000-35000" }
+      },
+      "related_certifications": ["AWS Developer", "Oracle Certified Professional"],
+      "related_jobs": ["Full Stack Developer", "Database Administrator"],
+      "market_demand": "high",
+      "keywords_fr": ["développeur backend", "serveur", "api"],
+      "keywords_en": ["backend developer", "server-side", "api engineer"]
+    },
+    {
+      "job_title": "Data Engineer",
+      "aliases": ["Ingénieur Data", "Big Data Engineer", "ETL Developer"],
+      "required_skills": {
+        "primary": ["Python", "SQL", "Spark", "ETL"],
+        "secondary": ["Airflow", "Kafka", "AWS", "Hadoop"],
+        "nice_to_have": ["Databricks", "Snowflake", "Scala", "Kubernetes"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "9000-13000" },
+        "mid": { "years": "2-5", "salary_mad": "13000-22000" },
+        "senior": { "years": "5+", "salary_mad": "22000-38000" }
+      },
+      "related_certifications": ["AWS Data Analytics", "Google Cloud Data Engineer"],
+      "related_jobs": ["Data Scientist", "ML Engineer"],
+      "market_demand": "high",
+      "keywords_fr": ["ingénieur données", "big data", "pipeline de données"],
+      "keywords_en": ["data engineer", "big data", "data pipeline"]
+    },
+    {
+      "job_title": "Data Scientist",
+      "aliases": ["Data Analyst Senior", "Scientifique des Données", "Statistician"],
+      "required_skills": {
+        "primary": ["Python", "Machine Learning", "Statistics", "SQL"],
+        "secondary": ["Pandas", "Scikit-learn", "R", "Data Visualization"],
+        "nice_to_have": ["Deep Learning", "Tableau", "Power BI", "A/B Testing"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "9000-14000" },
+        "mid": { "years": "2-5", "salary_mad": "14000-24000" },
+        "senior": { "years": "5+", "salary_mad": "24000-40000" }
+      },
+      "related_certifications": ["IBM Data Science", "Google Data Analytics"],
+      "related_jobs": ["ML Engineer", "Data Engineer"],
+      "market_demand": "high",
+      "keywords_fr": ["scientifique des données", "analyse de données", "statistiques"],
+      "keywords_en": ["data scientist", "analytics", "statistics"]
+    },
+    {
+      "job_title": "ML Engineer",
+      "aliases": ["Machine Learning Engineer", "Ingénieur Machine Learning", "Applied Scientist"],
+      "required_skills": {
+        "primary": ["Python", "Machine Learning", "TensorFlow", "PyTorch"],
+        "secondary": ["MLOps", "Docker", "Kubernetes", "SQL"],
+        "nice_to_have": ["NLP", "Computer Vision", "AWS SageMaker", "Kubeflow"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "10000-15000" },
+        "mid": { "years": "2-5", "salary_mad": "15000-26000" },
+        "senior": { "years": "5+", "salary_mad": "26000-45000" }
+      },
+      "related_certifications": ["AWS Machine Learning", "TensorFlow Developer Certificate"],
+      "related_jobs": ["Data Scientist", "AI Engineer"],
+      "market_demand": "high",
+      "keywords_fr": ["ingénieur machine learning", "intelligence artificielle", "modèles"],
+      "keywords_en": ["ml engineer", "machine learning", "model deployment"]
+    },
+    {
+      "job_title": "DevOps Engineer",
+      "aliases": ["Ingénieur DevOps", "Site Reliability Engineer", "Infrastructure Engineer"],
+      "required_skills": {
+        "primary": ["Docker", "Kubernetes", "CI/CD", "Linux"],
+        "secondary": ["AWS", "Terraform", "Ansible", "Jenkins"],
+        "nice_to_have": ["Prometheus", "Grafana", "GitOps", "Azure"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "9000-13000" },
+        "mid": { "years": "2-5", "salary_mad": "13000-22000" },
+        "senior": { "years": "5+", "salary_mad": "22000-38000" }
+      },
+      "related_certifications": ["AWS DevOps Engineer", "Certified Kubernetes Administrator"],
+      "related_jobs": ["Cloud Architect", "Backend Developer"],
+      "market_demand": "high",
+      "keywords_fr": ["devops", "infrastructure", "automatisation"],
+      "keywords_en": ["devops engineer", "infrastructure", "automation"]
+    },
+    {
+      "job_title": "Cloud Architect",
+      "aliases": ["Architecte Cloud", "Cloud Solutions Architect", "Infrastructure Architect"],
+      "required_skills": {
+        "primary": ["AWS", "Azure", "Cloud Architecture", "Networking"],
+        "secondary": ["Terraform", "Kubernetes", "Security", "GCP"],
+        "nice_to_have": ["Multi-Cloud", "FinOps", "Serverless", "Disaster Recovery"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "12000-16000" },
+        "mid": { "years": "2-5", "salary_mad": "16000-28000" },
+        "senior": { "years": "5+", "salary_mad": "28000-50000" }
+      },
+      "related_certifications": ["AWS Solutions Architect", "Azure Solutions Architect Expert"],
+      "related_jobs": ["DevOps Engineer", "Cybersecurity Engineer"],
+      "market_demand": "high",
+      "keywords_fr": ["architecte cloud", "infrastructure cloud", "solutions cloud"],
+      "keywords_en": ["cloud architect", "cloud solutions", "infrastructure design"]
+    },
+    {
+      "job_title": "Mobile Developer (React Native)",
+      "aliases": ["Développeur Mobile", "React Native Developer", "App Developer"],
+      "required_skills": {
+        "primary": ["React Native", "JavaScript", "TypeScript", "Mobile UI"],
+        "secondary": ["Redux", "iOS", "Android", "REST APIs"],
+        "nice_to_have": ["Expo", "Firebase", "Swift", "Kotlin"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "8000-12000" },
+        "mid": { "years": "2-5", "salary_mad": "12000-20000" },
+        "senior": { "years": "5+", "salary_mad": "20000-34000" }
+      },
+      "related_certifications": ["Meta React Native", "Google Associate Android Developer"],
+      "related_jobs": ["Frontend Developer", "Full Stack Developer"],
+      "market_demand": "medium",
+      "keywords_fr": ["développeur mobile", "application mobile", "react native"],
+      "keywords_en": ["mobile developer", "react native", "app development"]
+    },
+    {
+      "job_title": "Python Developer",
+      "aliases": ["Développeur Python", "Python Engineer", "Backend Python Developer"],
+      "required_skills": {
+        "primary": ["Python", "Django", "Flask", "SQL"],
+        "secondary": ["FastAPI", "Docker", "REST APIs", "PostgreSQL"],
+        "nice_to_have": ["Celery", "AWS", "Pytest", "Microservices"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "8000-12000" },
+        "mid": { "years": "2-5", "salary_mad": "12000-20000" },
+        "senior": { "years": "5+", "salary_mad": "20000-34000" }
+      },
+      "related_certifications": ["PCEP", "PCAP - Python Institute"],
+      "related_jobs": ["Backend Developer", "Data Engineer"],
+      "market_demand": "high",
+      "keywords_fr": ["développeur python", "programmeur python"],
+      "keywords_en": ["python developer", "python engineer"]
+    },
+    {
+      "job_title": "Java Developer",
+      "aliases": ["Développeur Java", "Java Engineer", "J2EE Developer"],
+      "required_skills": {
+        "primary": ["Java", "Spring Boot", "SQL", "REST APIs"],
+        "secondary": ["Hibernate", "Maven", "Docker", "Microservices"],
+        "nice_to_have": ["Kafka", "AWS", "Kubernetes", "JUnit"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "8000-12000" },
+        "mid": { "years": "2-5", "salary_mad": "12000-20000" },
+        "senior": { "years": "5+", "salary_mad": "20000-35000" }
+      },
+      "related_certifications": ["Oracle Certified Professional Java", "Spring Professional"],
+      "related_jobs": ["Backend Developer", "Full Stack Developer"],
+      "market_demand": "high",
+      "keywords_fr": ["développeur java", "ingénieur java"],
+      "keywords_en": ["java developer", "java engineer"]
+    },
+    {
+      "job_title": "PHP Developer",
+      "aliases": ["Développeur PHP", "Web Developer PHP", "Laravel Developer"],
+      "required_skills": {
+        "primary": ["PHP", "Laravel", "MySQL", "REST APIs"],
+        "secondary": ["Symfony", "JavaScript", "Composer", "Git"],
+        "nice_to_have": ["Vue.js", "Docker", "WordPress", "AWS"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "6000-10000" },
+        "mid": { "years": "2-5", "salary_mad": "10000-16000" },
+        "senior": { "years": "5+", "salary_mad": "16000-28000" }
+      },
+      "related_certifications": ["Zend Certified PHP Engineer"],
+      "related_jobs": ["Backend Developer", "Full Stack Developer"],
+      "market_demand": "medium",
+      "keywords_fr": ["développeur php", "laravel", "symfony"],
+      "keywords_en": ["php developer", "laravel developer"]
+    },
+    {
+      "job_title": "Cybersecurity Engineer",
+      "aliases": ["Ingénieur Cybersécurité", "Security Engineer", "Information Security Analyst"],
+      "required_skills": {
+        "primary": ["Network Security", "Penetration Testing", "SIEM", "Linux"],
+        "secondary": ["Firewalls", "Python", "Incident Response", "Cryptography"],
+        "nice_to_have": ["Cloud Security", "Threat Intelligence", "Forensics", "Zero Trust"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "9000-13000" },
+        "mid": { "years": "2-5", "salary_mad": "13000-23000" },
+        "senior": { "years": "5+", "salary_mad": "23000-40000" }
+      },
+      "related_certifications": ["CEH", "CISSP", "CompTIA Security+"],
+      "related_jobs": ["Cloud Architect", "DevOps Engineer"],
+      "market_demand": "high",
+      "keywords_fr": ["cybersécurité", "sécurité informatique", "pentest"],
+      "keywords_en": ["cybersecurity", "security engineer", "infosec"]
+    },
+    {
+      "job_title": "Database Administrator",
+      "aliases": ["Administrateur Base de Données", "DBA", "Database Engineer"],
+      "required_skills": {
+        "primary": ["SQL", "PostgreSQL", "MySQL", "Database Tuning"],
+        "secondary": ["Backup & Recovery", "Oracle", "Replication", "Linux"],
+        "nice_to_have": ["MongoDB", "AWS RDS", "Sharding", "NoSQL"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "8000-12000" },
+        "mid": { "years": "2-5", "salary_mad": "12000-19000" },
+        "senior": { "years": "5+", "salary_mad": "19000-32000" }
+      },
+      "related_certifications": ["Oracle Certified DBA", "Microsoft SQL Server Certification"],
+      "related_jobs": ["Backend Developer", "Data Engineer"],
+      "market_demand": "medium",
+      "keywords_fr": ["administrateur base de données", "dba", "gestion de données"],
+      "keywords_en": ["database administrator", "dba", "data management"]
+    },
+    {
+      "job_title": "UI/UX Designer",
+      "aliases": ["Designer UI/UX", "Product Designer", "User Experience Designer"],
+      "required_skills": {
+        "primary": ["Figma", "User Research", "Wireframing", "Prototyping"],
+        "secondary": ["Adobe XD", "Sketch", "Design Systems", "Usability Testing"],
+        "nice_to_have": ["HTML/CSS", "Motion Design", "Accessibility", "Design Thinking"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "6000-10000" },
+        "mid": { "years": "2-5", "salary_mad": "10000-17000" },
+        "senior": { "years": "5+", "salary_mad": "17000-28000" }
+      },
+      "related_certifications": ["Google UX Design Certificate", "NN/g UX Certification"],
+      "related_jobs": ["Frontend Developer", "Product Manager"],
+      "market_demand": "medium",
+      "keywords_fr": ["designer ui/ux", "expérience utilisateur", "design produit"],
+      "keywords_en": ["ui/ux designer", "product designer", "user experience"]
+    },
+    {
+      "job_title": "Product Manager",
+      "aliases": ["Chef de Produit", "Product Owner", "Technical Product Manager"],
+      "required_skills": {
+        "primary": ["Product Strategy", "Roadmapping", "Stakeholder Management", "Agile"],
+        "secondary": ["Data Analysis", "User Research", "A/B Testing", "Jira"],
+        "nice_to_have": ["SQL", "Wireframing", "Pricing Strategy", "Growth Hacking"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "9000-13000" },
+        "mid": { "years": "2-5", "salary_mad": "13000-22000" },
+        "senior": { "years": "5+", "salary_mad": "22000-40000" }
+      },
+      "related_certifications": ["Pragmatic Institute PMC", "CSPO"],
+      "related_jobs": ["Scrum Master", "UI/UX Designer"],
+      "market_demand": "medium",
+      "keywords_fr": ["chef de produit", "product owner", "gestion produit"],
+      "keywords_en": ["product manager", "product owner", "roadmap"]
+    },
+    {
+      "job_title": "Scrum Master",
+      "aliases": ["Maître Scrum", "Agile Coach", "Project Coordinator Agile"],
+      "required_skills": {
+        "primary": ["Scrum", "Agile Methodologies", "Facilitation", "Team Coaching"],
+        "secondary": ["Jira", "Kanban", "Conflict Resolution", "Sprint Planning"],
+        "nice_to_have": ["SAFe", "Confluence", "Lean", "Stakeholder Communication"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "8000-12000" },
+        "mid": { "years": "2-5", "salary_mad": "12000-19000" },
+        "senior": { "years": "5+", "salary_mad": "19000-32000" }
+      },
+      "related_certifications": ["CSM", "PSM I/II"],
+      "related_jobs": ["Product Manager", "QA Engineer"],
+      "market_demand": "medium",
+      "keywords_fr": ["scrum master", "coach agile", "méthodologie agile"],
+      "keywords_en": ["scrum master", "agile coach", "sprint facilitator"]
+    },
+    {
+      "job_title": "QA Engineer",
+      "aliases": ["Ingénieur QA", "Test Engineer", "Quality Assurance Analyst"],
+      "required_skills": {
+        "primary": ["Manual Testing", "Test Automation", "Selenium", "Test Case Design"],
+        "secondary": ["JavaScript", "API Testing", "Jira", "Cypress"],
+        "nice_to_have": ["Performance Testing", "CI/CD", "Python", "Postman"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "6000-10000" },
+        "mid": { "years": "2-5", "salary_mad": "10000-16000" },
+        "senior": { "years": "5+", "salary_mad": "16000-28000" }
+      },
+      "related_certifications": ["ISTQB Certified Tester", "Certified Agile Tester"],
+      "related_jobs": ["Backend Developer", "Scrum Master"],
+      "market_demand": "medium",
+      "keywords_fr": ["ingénieur qa", "test logiciel", "assurance qualité"],
+      "keywords_en": ["qa engineer", "test automation", "quality assurance"]
+    },
+    {
+      "job_title": "Blockchain Developer",
+      "aliases": ["Développeur Blockchain", "Smart Contract Developer", "Web3 Developer"],
+      "required_skills": {
+        "primary": ["Solidity", "Smart Contracts", "Ethereum", "Web3.js"],
+        "secondary": ["JavaScript", "Cryptography", "Hardhat", "Node.js"],
+        "nice_to_have": ["Rust", "DeFi Protocols", "IPFS", "Layer 2 Solutions"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "10000-15000" },
+        "mid": { "years": "2-5", "salary_mad": "15000-26000" },
+        "senior": { "years": "5+", "salary_mad": "26000-45000" }
+      },
+      "related_certifications": ["Certified Blockchain Developer", "ConsenSys Academy"],
+      "related_jobs": ["Backend Developer", "Cybersecurity Engineer"],
+      "market_demand": "low",
+      "keywords_fr": ["développeur blockchain", "smart contract", "web3"],
+      "keywords_en": ["blockchain developer", "smart contracts", "web3"]
+    },
+    {
+      "job_title": "AI Engineer",
+      "aliases": ["Ingénieur IA", "Artificial Intelligence Engineer", "Generative AI Engineer"],
+      "required_skills": {
+        "primary": ["Python", "LLMs", "Deep Learning", "NLP"],
+        "secondary": ["PyTorch", "TensorFlow", "Prompt Engineering", "Vector Databases"],
+        "nice_to_have": ["LangChain", "RAG", "MLOps", "AWS Bedrock"]
+      },
+      "experience_levels": {
+        "junior": { "years": "0-2", "salary_mad": "11000-16000" },
+        "mid": { "years": "2-5", "salary_mad": "16000-28000" },
+        "senior": { "years": "5+", "salary_mad": "28000-48000" }
+      },
+      "related_certifications": ["AWS Machine Learning Specialty", "DeepLearning.AI TensorFlow"],
+      "related_jobs": ["ML Engineer", "Data Scientist"],
+      "market_demand": "high",
+      "keywords_fr": ["ingénieur ia", "intelligence artificielle générative", "llm"],
+      "keywords_en": ["ai engineer", "generative ai", "llm engineer"]
+    }
+  ]
+}
