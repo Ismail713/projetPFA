@@ -86,3 +86,16 @@ CREATE INDEX idx_match_results_user_id ON match_results(user_id);
 CREATE INDEX idx_match_results_cv_id ON match_results(cv_id);
 CREATE INDEX idx_match_results_job_offer_id ON match_results(job_offer_id);
 CREATE INDEX idx_match_results_score ON match_results(score DESC);
+
+CREATE TABLE user_feedback (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    match_result_id INT REFERENCES match_results(id),
+    job_title VARCHAR,
+    feedback VARCHAR CHECK (feedback IN ('relevant','not_relevant','applied')),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_user_feedback_user_id ON user_feedback(user_id);
+CREATE INDEX idx_user_feedback_match_result_id ON user_feedback(match_result_id);

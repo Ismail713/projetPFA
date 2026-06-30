@@ -220,7 +220,7 @@ export default function MatchesList() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
       {matches.map((match) => (
-        <MatchCard key={match.url} match={match} />
+        <MatchCard key={match.id} match={match} />
       ))}
     </div>
   );

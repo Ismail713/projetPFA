@@ -238,6 +238,7 @@ router.get("/matches", optionalAuth, async (req: AuthRequest, res: Response): Pr
     );
 
     const matches = result.rows.map((r: Record<string, unknown>) => ({
+      id: r.id,
       title: r.title,
       company: r.company,
       url: r.url,

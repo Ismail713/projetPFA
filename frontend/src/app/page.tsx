@@ -5,6 +5,7 @@ import CVUpload from "@/components/cv/CVUpload";
 import MatchesList from "@/components/jobs/MatchesList";
 import CVAnalysis from "@/components/cv/CVAnalysis";
 import ResultsTabs from "@/components/ResultsTabs";
+import LearningProfile from "@/components/dashboard/LearningProfile";
 
 export default function Home() {
   return (
@@ -40,6 +41,10 @@ export default function Home() {
           analysisPanel={<CVAnalysis />}
           offersPanel={<MatchesList />}
         />
+
+        <div className="mt-8">
+          <LearningProfile />
+        </div>
       </section>
     </>
   );

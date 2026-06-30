@@ -1,4 +1,10 @@
+"use client";
+
+import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+
 export interface MatchResult {
+  id: number;
   title: string;
   company: string;
   url: string;
@@ -8,6 +14,80 @@ export interface MatchResult {
   missing_requirements: string[];
   strengths: string[];
   recommendation: string;
+}
+
+const FEEDBACK_CONFIG = {
+  relevant: {
+    label: "Pertinent",
+    icon: "👍",
+    activeClass: "bg-emerald-500 text-white border-emerald-500",
+  },
+  not_relevant: {
+    label: "Non pertinent",
+    icon: "👎",
+    activeClass: "bg-red-500 text-white border-red-500",
+  },
+  applied: {
+    label: "J'ai postulé",
+    icon: "✅",
+    activeClass: "bg-blue-500 text-white border-blue-500",
+  },
+} as const;
+
+type FeedbackType = keyof typeof FEEDBACK_CONFIG;
+
+function FeedbackBar({ matchId, jobTitle }: { matchId: number; jobTitle: string }) {
+  const { token } = useAuth();
+  const [sent, setSent] = useState<FeedbackType | null>(null);
+  const [loading, setLoading] = useState<FeedbackType | null>(null);
+
+  if (!token) return null;
+
+  const sendFeedback = async (type: FeedbackType) => {
+    if (sent || loading) return;
+    setLoading(type);
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ matchResultId: matchId, jobTitle, feedback: type }),
+      });
+      if (res.ok) setSent(type);
+    } catch {
+      /* ignore network errors, allow retry */
+    } finally {
+      setLoading(null);
+    }
+  };
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 border-t border-slate-100 dark:border-surface-700 pt-4">
+      {(Object.keys(FEEDBACK_CONFIG) as FeedbackType[]).map((type) => {
+        const { label, icon, activeClass } = FEEDBACK_CONFIG[type];
+        const isActive = sent === type;
+        const disabled = sent !== null || loading !== null;
+
+        return (
+          <button
+            key={type}
+            onClick={() => sendFeedback(type)}
+            disabled={disabled}
+            className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
+              isActive
+                ? activeClass
+                : "border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-surface-600 dark:text-surface-400 dark:hover:text-surface-200"
+            } ${disabled && !isActive ? "opacity-40 cursor-not-allowed" : ""}`}
+          >
+            <span>{icon}</span>
+            {label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 const VERDICT_CONFIG = {
@@ -188,6 +268,8 @@ export default function MatchCard({ match }: { match: MatchResult }) {
           />
         </svg>
       </a>
+
+      <FeedbackBar matchId={match.id} jobTitle={match.title} />
     </div>
   );
 }
