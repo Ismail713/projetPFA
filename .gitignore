@@ -34,6 +34,7 @@ npm-debug.log*
 
 # Next.js
 .next/
+*.tsbuildinfo
 
 # ChromaDB
 ai-service/chroma_db/
