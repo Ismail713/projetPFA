@@ -38,3 +38,6 @@ npm-debug.log*
 
 # ChromaDB
 ai-service/chroma_db/
+
+# Trained preference models
+ai-service/models/

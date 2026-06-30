@@ -9,12 +9,14 @@ from pydantic import BaseModel
 
 from app.models.gemma_client import GemmaClient
 from app.rag.rag_service import RAGService
+from app.training.preference_model import PreferenceModelService
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 client = GemmaClient()
 rag_service = RAGService()
+preference_model_service = PreferenceModelService(rag_service.vector_store)
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 
@@ -37,6 +39,18 @@ class AddFeedbackRequest(BaseModel):
     user_id: str
     job_title: str
     feedback_type: str
+
+
+class TrainPreferencesRequest(BaseModel):
+    user_id: str
+
+
+def verdict_for(score: float) -> str:
+    if score >= 70:
+        return "Apply"
+    if score >= 45:
+        return "Consider"
+    return "Skip"
 
 
 def extract_json(text: str) -> dict:
@@ -240,15 +254,45 @@ async def final_match(body: FinalMatchRequest):
     raw = await client.call(prompt)
 
     try:
-        return extract_json(raw)
+        result = extract_json(raw)
     except (json.JSONDecodeError, ValueError) as e:
         raise HTTPException(status_code=500, detail=f"Invalid JSON from model: {e}")
+
+    if body.user_id:
+        preference_score = preference_model_service.predict_preference(body.user_id, body.job_description)
+        if preference_score is not None:
+            llm_score = float(result.get("match_percentage", 0))
+            adjusted_score = round(0.8 * llm_score + 0.2 * preference_score * 100)
+            adjusted_score = max(0, min(100, adjusted_score))
+
+            result["original_score"] = llm_score
+            result["match_percentage"] = adjusted_score
+            result["verdict"] = verdict_for(adjusted_score)
+            result["personalized"] = True
+        else:
+            result["personalized"] = False
+    else:
+        result["personalized"] = False
+
+    return result
 
 
 @router.post("/add-feedback")
 async def add_feedback(body: AddFeedbackRequest):
     rag_service.vector_store.add_feedback_embedding(body.user_id, body.job_title, body.feedback_type)
-    return {"status": "feedback saved"}
+
+    try:
+        training_result = preference_model_service.train(body.user_id)
+    except Exception as e:
+        logger.warning("Preference model training failed for user %s: %s", body.user_id, e)
+        training_result = {"trained": False, "reason": "training_error"}
+
+    return {"status": "feedback saved", "training": training_result}
+
+
+@router.post("/train-preferences")
+async def train_preferences(body: TrainPreferencesRequest):
+    return preference_model_service.train(body.user_id)
 
 
 @router.get("/user-profile/{user_id}")

@@ -133,6 +133,7 @@ export async function runScrapingAndMatchingPipeline(
           body: JSON.stringify({
             cv_text: cvText,
             job_description: `${offer.title} at ${offer.company}. ${offer.description}`,
+            user_id: String(userId),
           }),
         });
 
