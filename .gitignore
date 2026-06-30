@@ -34,3 +34,6 @@ npm-debug.log*
 
 # Next.js
 .next/
+
+# ChromaDB
+ai-service/chroma_db/
