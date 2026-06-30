@@ -8,11 +8,13 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from app.models.gemma_client import GemmaClient
+from app.rag.rag_service import RAGService
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
 client = GemmaClient()
+rag_service = RAGService()
 
 PROMPTS_DIR = Path(__file__).resolve().parent.parent / "prompts"
 
@@ -28,6 +30,13 @@ class GenerateQueriesRequest(BaseModel):
 class FinalMatchRequest(BaseModel):
     cv_text: str
     job_description: str
+    user_id: str | None = None
+
+
+class AddFeedbackRequest(BaseModel):
+    user_id: str
+    job_title: str
+    feedback_type: str
 
 
 def extract_json(text: str) -> dict:
@@ -184,8 +193,15 @@ def validate_queries(result: dict, cv_text: str) -> dict:
 
 @router.post("/generate-queries")
 async def generate_queries(body: GenerateQueriesRequest):
+    enriched_context = rag_service.enrich_cv_context(body.cv_text)
+
     prompt_template = (PROMPTS_DIR / "query_generation_prompt.txt").read_text(encoding="utf-8")
     prompt = prompt_template.replace("{{CV_TEXT}}", body.cv_text)
+    prompt = (
+        f"KNOWLEDGE BASE CONTEXT: {enriched_context}\n"
+        "Use this context to generate more precise job search queries.\n\n"
+        f"{prompt}"
+    )
 
     try:
         raw = await client.call(prompt)
@@ -203,8 +219,23 @@ async def generate_queries(body: GenerateQueriesRequest):
 
 @router.post("/final-match")
 async def final_match(body: FinalMatchRequest):
+    job_context = rag_service.enrich_job_context(body.job_description)
+    user_context = (
+        rag_service.build_user_context(body.user_id)
+        if body.user_id
+        else "No user preference history available."
+    )
+
     prompt_template = (PROMPTS_DIR / "matching_prompt.txt").read_text(encoding="utf-8")
     prompt = prompt_template.replace("{{CV_TEXT}}", body.cv_text).replace("{{JOB_DESCRIPTION}}", body.job_description)
+    prompt = (
+        f"MARKET CONTEXT: {job_context}\n"
+        f"USER PREFERENCES: {user_context}\n\n"
+        "Use this additional context to provide a more accurate compatibility score. "
+        "The market context tells you what skills are typically required for this type of role. "
+        "The user preferences tell you what the user has liked or rejected before.\n\n"
+        f"{prompt}"
+    )
 
     raw = await client.call(prompt)
 
@@ -212,3 +243,25 @@ async def final_match(body: FinalMatchRequest):
         return extract_json(raw)
     except (json.JSONDecodeError, ValueError) as e:
         raise HTTPException(status_code=500, detail=f"Invalid JSON from model: {e}")
+
+
+@router.post("/add-feedback")
+async def add_feedback(body: AddFeedbackRequest):
+    rag_service.vector_store.add_feedback_embedding(body.user_id, body.job_title, body.feedback_type)
+    return {"status": "feedback saved"}
+
+
+@router.get("/user-profile/{user_id}")
+async def user_profile(user_id: str):
+    preferences = rag_service.vector_store.get_user_preferences(user_id)
+    profile_summary = rag_service.build_user_context(user_id)
+
+    query_text = ", ".join(preferences["liked_jobs"]) or profile_summary
+    recommended = rag_service.vector_store.search_similar_jobs(query_text)
+    recommended_job_titles = [job["job_title"] for job in recommended]
+
+    return {
+        "preferences": preferences,
+        "recommended_job_titles": recommended_job_titles,
+        "profile_summary": profile_summary,
+    }
